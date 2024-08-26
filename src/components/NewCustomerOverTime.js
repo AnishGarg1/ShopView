@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import records from '../TestData/shopifyCustomer';
-// import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
-// // Register necessary components
-// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { useSelector } from 'react-redux';
 
 const NewCustomersOverTime = () => {
+  const records = useSelector((state) => state.shopify.customers);
   const [interval, setInterval] = useState('daily');
 
   // Function to group data based on the selected interval
@@ -52,22 +49,107 @@ const NewCustomersOverTime = () => {
       {
         label: 'New Customers',
         data: data,
-        backgroundColor: 'rgba(255,99,132,0.2)',
-        borderColor: 'rgba(255,99,132,1)',
-        borderWidth: 1,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2,
+        hoverBackgroundColor: 'rgba(54, 162, 235, 0.4)',
+        hoverBorderColor: 'rgba(54, 162, 235, 1)',
       },
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#333',
+          font: {
+            size: 14,
+          },
+        },
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+          },
+        },
+        title: {
+          display: true,
+          text: 'Time Interval',
+          color: '#333',
+          font: {
+            size: 14,
+          },
+        },
+      },
+      y: {
+        grid: {
+          borderColor: '#ddd',
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+          },
+        },
+        title: {
+          display: true,
+          text: 'Number of New Customers',
+          color: '#333',
+          font: {
+            size: 14,
+          },
+        },
+      },
+    },
+  };
+
   return (
-    <div>
-      <div>
-        <button onClick={() => setInterval('daily')}>Daily</button>
-        <button onClick={() => setInterval('monthly')}>Monthly</button>
-        <button onClick={() => setInterval('quarterly')}>Quarterly</button>
-        <button onClick={() => setInterval('yearly')}>Yearly</button>
+    <div className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">New Customers Over Time</h2>
+      <div className="mb-4 flex space-x-4">
+        <button 
+          onClick={() => setInterval('daily')} 
+          className={`px-4 py-2 rounded-lg ${interval === 'daily' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} transition-colors duration-200`}
+        >
+          Daily
+        </button>
+        <button 
+          onClick={() => setInterval('monthly')} 
+          className={`px-4 py-2 rounded-lg ${interval === 'monthly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} transition-colors duration-200`}
+        >
+          Monthly
+        </button>
+        <button 
+          onClick={() => setInterval('quarterly')} 
+          className={`px-4 py-2 rounded-lg ${interval === 'quarterly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} transition-colors duration-200`}
+        >
+          Quarterly
+        </button>
+        <button 
+          onClick={() => setInterval('yearly')} 
+          className={`px-4 py-2 rounded-lg ${interval === 'yearly' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'} transition-colors duration-200`}
+        >
+          Yearly
+        </button>
       </div>
-      <Bar data={chartData} />
+      <div className="h-[500px]">
+        <Bar data={chartData} options={chartOptions} />
+      </div>
     </div>
   );
 };

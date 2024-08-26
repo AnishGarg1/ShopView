@@ -1,30 +1,35 @@
-const groupDataByInterval = (records, interval) => {
+import moment from 'moment';
+
+const groupDataByInterval = (orders, interval) => {
   const groupedData = {};
 
-  records.forEach((order) => {
-    const date = new Date(order.created_at);
-    let key;
+  orders.forEach((order) => {
+    const date = moment(order.created_at);
+    const totalPrice = parseFloat(order.total_price_set.shop_money.amount);
 
+    let key;
     switch (interval) {
-      case "daily":
-        key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      case 'daily':
+        key = date.format('YYYY-MM-DD');
         break;
-      case "monthly":
-        key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+      case 'monthly':
+        key = date.format('YYYY-MM');
         break;
-      case "quarterly":
-        const quarter = Math.floor(date.getMonth() / 3) + 1;
-        key = `${date.getFullYear()}-Q${quarter}`;
+      case 'quarterly':
+        key = `${date.year()}-Q${date.quarter()}`;
         break;
-      case "yearly":
-        key = `${date.getFullYear()}`;
+      case 'yearly':
+        key = date.format('YYYY');
         break;
       default:
-        key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        key = date.format('YYYY-MM-DD');
+        break;
     }
 
-    if (!groupedData[key]) groupedData[key] = 0;
-    groupedData[key] += parseFloat(order.total_price);
+    if (!groupedData[key]) {
+      groupedData[key] = 0;
+    }
+    groupedData[key] += totalPrice;
   });
 
   return groupedData;
